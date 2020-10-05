@@ -1,3 +1,4 @@
+import matplotlib.pylab as plt
 import re
 letters = list('абвгдежзийклмнопрстуфхцчшщъыьэюя' + 'абвгдежзийклмнопрстуфхцчшщъыьэюя'.upper())
 alph_len = len(letters)
@@ -48,3 +49,30 @@ def icx(text):
     div = len_of_text * (len_of_text - 1)
     result = arr / div
     return result
+
+
+def print_icx(arr):
+    arr_of_icx = {}
+    for element in arr:
+       encrypted = vignere_crypt(text, element, 'encrypt')
+       print("инднекс совпадений для шифр текста длинны {}: {}".format(len(element),icx(encrypted)))
+       arr_of_icx[len(element)] = icx(encrypted)
+    return arr_of_icx
+
+if __name__ == "__main__":
+
+    text = open('besy.txt','r').read()
+    text = re.sub('ё','e',text)
+    arr_of_keys = ['ая','кот','киев','гелла','установщик','аккумулятор','зерносушилка','импрессионист','бракосочетание','десятикопеечный','искусствоведение','анастигматический','высококачественный','ацетилхолинэстераза','автоматизированность']
+    dict_of_icx = print_icx(arr_of_keys)
+    plt.plot(list(dict_of_icx.keys()), list(dict_of_icx.values()))
+    plt.xlabel('key length')
+    plt.ylabel('index of coincidence')
+    plt.show()
+    plt.savefig('plot.png')
+
+
+
+
+
+
