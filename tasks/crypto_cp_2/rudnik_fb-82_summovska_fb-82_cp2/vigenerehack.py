@@ -128,4 +128,31 @@ def find_key_len(ciphertex):
             probable_keys.append(key_len)
     return probable_keys
 
-print(find_key_len(ciphertext))
+
+def mutal_icx(substr1,substr2):
+    lenght_of_substr1 = len(substr1)
+    lenght_of_substr2 = len(substr2)
+    letter_map1 = {i:0 for i in LETTERS}
+    letter_map2 = {i:0 for i in LETTERS}
+    for letter in substr1:
+        letter_map1[letter] += 1
+    for letter in substr2:
+        letter_map2[letter] += 1
+    for letter in letter_map1:
+        letter_map1[letter] += letter_map1[letter] / lenght_of_substr1
+    for letter in letter_map2:
+        letter_map2[letter] += letter_map2[letter] / lenght_of_substr2
+
+    sum_of_freq = sum([letter_map1[letter] * letter_map2[letter] for letter in letter_map1])
+
+    #letter_freq_str1 = sum([letter_map1[letter] for letter in letter_map1])
+    #letter_freq_str2 = sum([letter_map2[letter] for letter in letter_map2])
+    #letter_freq_product = letter_freq_str1 * letter_freq_str2
+    sub1sub2_len = lenght_of_substr1 * lenght_of_substr2
+    result = sum_of_freq / sub1sub2_len
+    return result
+
+
+
+
+
