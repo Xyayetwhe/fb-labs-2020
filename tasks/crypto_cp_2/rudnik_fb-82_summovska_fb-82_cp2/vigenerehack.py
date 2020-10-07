@@ -129,6 +129,9 @@ def find_key_len(ciphertex):
     return probable_keys
 
 
+def shift_substring(substring,key):
+    return "".join([russian_inv_map[(russian_map[letter] + key) % len(LETTERS)] for letter in substring])
+
 def mutal_icx(substr1,substr2):
     lenght_of_substr1 = len(substr1)
     lenght_of_substr2 = len(substr2)
