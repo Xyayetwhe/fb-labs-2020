@@ -55,7 +55,7 @@ def print_icx(arr):
     arr_of_icx = {}
     for element in arr:
        encrypted = vignere_crypt(text, element, 'encrypt')
-       print("инднекс совпадений для шифр текста длинны {}: {}".format(len(element),icx(encrypted)))
+       print("инднекс совпадений для шифр текста,защифрованного ключом длинны {}: {}".format(len(element),icx(encrypted)))
        arr_of_icx[len(element)] = icx(encrypted)
     return arr_of_icx
 
@@ -64,6 +64,7 @@ if __name__ == "__main__":
     text = open('besy.txt','r').read()
     text = re.sub('ё','e',text)
     arr_of_keys = ['ая','кот','киев','гелла','установщик','аккумулятор','зерносушилка','импрессионист','бракосочетание','десятикопеечный','искусствоведение','анастигматический','высококачественный','ацетилхолинэстераза','автоматизированность']
+    print("инднекс совпадений для открытого текста: {}".format(icx(text)))
     dict_of_icx = print_icx(arr_of_keys)
     plt.plot(list(dict_of_icx.keys()), list(dict_of_icx.values()))
     plt.xlabel('key length')
