@@ -1,4 +1,5 @@
 import re
+import vigenere
 ciphertext = """
 деьооуцмдурьдыегныьпуыккэаонтцчхлуучктвдджоаубуяцбхкугбэщешряцзывтшщяшхтяяуюйлрънпрйбдшзъняъмйнуьря
 пьщгтуьзразхтпфгяжитхчьурвттдфанвзгьячрщюитобущузсшзпуыхнмвбуъняэаоемйнеорцбэзмюцйхлыпейжцбышяпщчсу
@@ -156,6 +157,53 @@ def mutal_icx(substr1,substr2):
     return result
 
 
+def show_possible_keys(arr):
+    possible_keys = []
+    for i in range(0,len(LETTERS)):
+        possible_key = LETTERS[i]
+        for number in arr:
+            possible_key += russian_inv_map[(i - number) % len(LETTERS)]
+        possible_keys.append(possible_key)
+    return possible_keys
 
+
+def pretty_keys_display(keylen,arr_of_keys):
+    print("keys of len {}".format(keylen))
+    for i,key in enumerate(arr_of_keys):
+        print(i,key,end='\n' if i % 10 == 0 else '\t')
+    print('\n')
+
+
+
+def hack_vigenere(ciphertext):
+    for keylen in find_key_len(ciphertext):
+        splited_by_keylen = split_by_keylen(ciphertext,keylen)
+        first_substr = splited_by_keylen[0]
+        strnum_shift = []
+        for substr_num in range(1,keylen):
+            for shift_num in range(1,34):
+                mutal_coinc = mutal_icx(first_substr,shift_substring(splited_by_keylen[substr_num],shift_num))
+                if 0.050 <= mutal_coinc <= 0.070:
+                    #print("str number {} shift {} icx {} : ".format(substr_num + 1,shift_num,mutal_icx(first_substr,shift_substring(splited_by_keylen[substr_num],shift_num))))
+                    strnum_shift.append(shift_num)
+        arr_of_keys = show_possible_keys(strnum_shift)
+        pretty_keys_display(keylen,arr_of_keys)
+        print("если сдесь есть подходящий ключ,введите y,если же нет - введите n")
+        answer = str(input('введите ответ: '))
+        if answer == 'y' or answer == 'Y':
+            key = int(input('введите номер ключа: '))
+            print("расшифровываем шифротекст с помощью ключа '{}'".format(arr_of_keys[key]))
+            plaintext = vigenere.vignere_crypt(ciphertext,arr_of_keys[key],'decrypt')
+            print(plaintext)
+            decrypt_answer = str(input("расшифровано правильно? [ynYN]: "))
+            if decrypt_answer == 'y' or decrypt_answer == 'Y':
+                return plaintext
+            else:
+                continue
+    return None
+
+
+if __name__ == "__main__":
+    print(hack_vigenere(ciphertext))
 
 
