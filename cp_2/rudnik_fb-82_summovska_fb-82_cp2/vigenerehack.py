@@ -1,5 +1,7 @@
 import re
 import vigenere
+import numpy as np
+import matplotlib.pylab as plt
 ciphertext = """
 деьооуцмдурьдыегныьпуыккэаонтцчхлуучктвдджоаубуяцбхкугбэщешряцзывтшщяшхтяяуюйлрънпрйбдшзъняъмйнуьря
 пьщгтуьзразхтпфгяжитхчьурвттдфанвзгьячрщюитобущузсшзпуыхнмвбуъняэаоемйнеорцбэзмюцйхлыпейжцбышяпщчсу
@@ -92,6 +94,7 @@ ciphertext = re.sub('\n','',ciphertext)
 LETTERS = 'абвгдежзийклмнопрстуфхцчшщъыьэюя'
 russian_map = {letter:i for i,letter in enumerate(LETTERS)}
 russian_inv_map = {russian_map[i]: i  for i in LETTERS}
+for_plot = {}
 
 def split_by_keylen(ciphertext,keylen):
     arr_of_parts = []
@@ -123,11 +126,15 @@ def not_white_noise(arr_of_icx):
 
 def find_key_len(ciphertex):
     probable_keys = []
-    for key_len in range(2,31):
+    for key_len in range(2,32):
+        for_plot[key_len] = icx(split_by_keylen(ciphertext,key_len))
         if not_white_noise(icx(split_by_keylen(ciphertext,key_len))):
             #print("{}: {}".format(key_len,icx(split_by_keylen(ciphertext,key_len))))
             probable_keys.append(key_len)
     return probable_keys
+
+
+
 
 
 def shift_substring(substring,key):
@@ -188,6 +195,16 @@ def hack_vigenere(ciphertext):
                     strnum_shift.append(shift_num)
         arr_of_keys = show_possible_keys(strnum_shift)
         pretty_keys_display(keylen,arr_of_keys)
+
+        icx_values = list(for_plot.values())
+        icx_values = list(map(lambda x: sum(x) / len(x),icx_values))
+        keys_len = list(for_plot.keys())
+        plt.plot(keys_len,icx_values)
+        plt.xlabel('key length')
+        plt.ylabel('index of coincidence')
+        plt.show()
+        plt.savefig('plot.png',dpi=100)
+
         print("если сдесь есть подходящий ключ,введите y,если же нет - введите n")
         answer = str(input('введите ответ: '))
         if answer == 'y' or answer == 'Y':
@@ -205,5 +222,4 @@ def hack_vigenere(ciphertext):
 
 if __name__ == "__main__":
     print(hack_vigenere(ciphertext))
-
 
