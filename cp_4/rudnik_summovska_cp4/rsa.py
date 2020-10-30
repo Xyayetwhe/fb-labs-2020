@@ -36,11 +36,39 @@ def GenerateKeyPair(name_of_first_user,name_of_second_user):
     data_of_second_user = {'public_key':(n1,e1),'private_key':d1,'p_and_q':(p1,q1)}
     dict_of_users[name_of_second_user] = data_of_second_user
 
+def Encrypt(m,e,n):
+    m = list(bytes(m.encode('ascii')))
+    m = '0x'+''.join(list(map(lambda x: hex(x)[2:],m)))
+    print(m)
+    m = int(m,16)
+    if m > n:
+        return None
+    return hex(pow(m,e,n))
+
+
+def Decrypt(c,d,n):
+    c = int(c,16)
+    m = pow(c,d,n)
+    m = hex(m)[2:]
+    m = [m[i:i+2] for i in range(0,len(m),2)]
+    m = ''.join(list(map(lambda x: chr(int(x,16)),m)))
+    return m
+
+
+def Sign(m,d,n):
+    orig_msg = m
+    s = Encrypt(m,d,n)
+    return (orig_msg,s)
+
+def Verify(m,s,e,n):
+    m = list(bytes(m.encode('ascii')))
+    m = '0x'+''.join(list(map(lambda x: hex(x)[2:],m)))
+    return m == hex(pow(int(s,16),e,n))
 
 
 if __name__ == '__main__':
     GenerateKeyPair('tolik', 'yulya')
-    message = 'attack at down'
+    message = 'attack at dawn'
     p,q = dict_of_users['tolik']['p_and_q']
     n,e = dict_of_users['tolik']['public_key']
     d = dict_of_users['tolik']['private_key']
@@ -58,3 +86,11 @@ if __name__ == '__main__':
     print("n пользователя B: {}".format(hex(n1)))
     print("e пользователя B: {}".format(hex(e1)))
     print("d пользователя B: {}".format(hex(d1)))
+    crypt = Encrypt(message, e, n)
+    print(Decrypt(crypt, d, n))
+    m, s = Sign(message, d, n)
+    m1, s1 = Sign(message, d1, n1)
+    print("сигнатура пользователя A {}".format(s))
+    print("сигнатура пользователя B {}".format(s1))
+    print(Verify(m, s, e, n))
+    print(Verify(m1, s1, e1, n1))
