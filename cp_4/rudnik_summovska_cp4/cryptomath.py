@@ -1,7 +1,7 @@
 import random
 import math
-prime_from = int('01'+'0'*512,2)
-prime_to = int('1'+'1'*512,2)
+prime_from = int('01'+'0'*56,2)
+prime_to = int('1'+'1'*56,2)
 
 
 def gcd(x,y):
@@ -52,3 +52,16 @@ def choose_random_prime(n0=prime_from,n1=prime_to):
         candidate = m0+2*i
         if miller_rabin(candidate):
             return candidate
+
+def findModInverse(a, m):
+    if math.gcd(a,m) != 1:
+        return None
+    orig_m = m
+    prevu, u = 1, 0
+    prevv, v = 0, 1
+    while m != 0:
+        q = a//m
+        u, prevu = prevu - q*u, u
+        v, prevv = prevv - q*v, v
+        a, m = m, a % m
+    return prevu % orig_m
