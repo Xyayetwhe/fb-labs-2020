@@ -1,7 +1,7 @@
 import random
 import math
-prime_from = int('01'+'0'*56,2)
-prime_to = int('1'+'1'*56,2)
+prime_from = int('01'+'0'*512,2)
+prime_to = int('1'+'1'*512,2)
 
 
 def gcd(x,y):
@@ -45,13 +45,15 @@ def miller_rabin(p):
     return True
 
 
-def choose_random_prime(n0=prime_from,n1=prime_to):
+def choose_random_prime(n0=prime_from,n1=prime_to,info_for_report=False):
     x = random.randint(n0,n1)
     m0 = x if x % 2 != 0 else x + 1
     for i in range(1,n1-m0//2):
         candidate = m0+2*i
         if miller_rabin(candidate):
             return candidate
+        if info_for_report:
+            print("кандидат на роль {} {} не пройшов через те,що завалив тест Міллера–Рабіна".format(info_for_report,hex(candidate)))
 
 def findModInverse(a, m):
     if math.gcd(a,m) != 1:
