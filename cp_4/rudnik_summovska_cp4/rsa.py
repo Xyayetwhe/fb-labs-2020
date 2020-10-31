@@ -1,5 +1,6 @@
 import cryptomath
 import itertools
+import random
 dict_of_users = {}
 def good_random():
     q_ = cryptomath.choose_random_prime()
@@ -35,11 +36,16 @@ def GenerateKeyPair(name_of_first_user,name_of_second_user):
     d1 = cryptomath.findModInverse(e1,euler_n1)
     data_of_second_user = {'public_key':(n1,e1),'private_key':d1,'p_and_q':(p1,q1)}
     dict_of_users[name_of_second_user] = data_of_second_user
+    dict_of_users[name_of_second_user] = data_of_second_user
+    dict_of_users[name_of_first_user]['reviced_keys'] = {}
+    dict_of_users[name_of_second_user]['reviced_keys'] = {}
+    dict_of_users[name_of_first_user]['verified_keys'] = {}
+    dict_of_users[name_of_second_user]['varified_keys'] = {}
+
 
 def Encrypt(m,e,n):
     m = list(bytes(m.encode('ascii')))
     m = '0x'+''.join(list(map(lambda x: hex(x)[2:],m)))
-    print(m)
     m = int(m,16)
     if m > n:
         return None
@@ -64,6 +70,30 @@ def Verify(m,s,e,n):
     m = list(bytes(m.encode('ascii')))
     m = '0x'+''.join(list(map(lambda x: hex(x)[2:],m)))
     return m == hex(pow(int(s,16),e,n))
+
+def SendKey(sender,reciver,k):
+    n,e = dict_of_users[sender]['public_key']
+    n1,e1 = dict_of_users[reciver]['public_key']
+    k1 = pow(k,e1,n1)
+    d = dict_of_users[sender]['private_key']
+    s = pow(k,d,n)
+    s1 = pow(s,e1,n1)
+    dict_of_users[reciver]['reviced_keys'][sender] = [k1,s1]
+
+
+def ReceiveKey(sender,reciver):
+    k1,s1 = dict_of_users[reciver]['reviced_keys'][sender]
+    n1 = dict_of_users[reciver]['public_key'][0]
+    d1 = dict_of_users[reciver]['private_key']
+    n,e = dict_of_users[sender]['public_key']
+    k = pow(k1,d1,n1)
+    s = pow(s1,d1,n1)
+    if k == pow(s,e,n):
+        dict_of_users[reciver]['varified_keys'][sender] = [k1, s1]
+        return True
+
+
+
 
 
 if __name__ == '__main__':
@@ -94,3 +124,8 @@ if __name__ == '__main__':
     print("сигнатура пользователя B {}".format(s1))
     print(Verify(m, s, e, n))
     print(Verify(m1, s1, e1, n1))
+    k = random.randint(1,n-1)
+    SendKey('tolik','yulya',k)
+    print(ReceiveKey('tolik','yulya'))
+
+
