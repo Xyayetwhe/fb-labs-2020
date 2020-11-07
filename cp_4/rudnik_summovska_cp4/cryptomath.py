@@ -1,14 +1,10 @@
 import random
 import math
-prime_from = int('01'+'0'*512,2)
-prime_to = int('1'+'1'*512,2)
-
 
 def gcd(x,y):
     while (y):
         x,y=y,x%y
     return x
-
 
 def miller_rabin(p):
     for number in [2,3,5,7]:
@@ -45,7 +41,9 @@ def miller_rabin(p):
     return True
 
 
-def choose_random_prime(n0=prime_from,n1=prime_to,info_for_report=False):
+def choose_random_prime(amount_of_bits,info_for_report=False):
+    n0 = int('1'+'0'*(amount_of_bits // 2-2)+'1',2)
+    n1 = int('1'*(amount_of_bits // 2),2)
     x = random.randint(n0,n1)
     m0 = x if x % 2 != 0 else x + 1
     for i in range(1,n1-m0//2):
